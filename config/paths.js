@@ -73,6 +73,7 @@ module.exports = {
   proxySetup: resolveApp('src/setupProxy.js'),
   appNodeModules: resolveApp('node_modules'),
   publicUrlOrPath,
+  appSimplrCustomConfig: resolveApp('simplr.config.js'),
 };
 
 // @remove-on-eject-begin
@@ -100,6 +101,7 @@ module.exports = {
   ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
   appTypeDeclarations: resolveApp('src/react-app-env.d.ts'),
   ownTypeDeclarations: resolveOwn('lib/react-app.d.ts'),
+  appSimplrCustomConfig: resolveApp('simplr.config.js'),
 };
 
 const ownPackageJson = require('../package.json');

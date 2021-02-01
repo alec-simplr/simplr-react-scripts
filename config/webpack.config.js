@@ -30,6 +30,7 @@ const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 // @remove-on-eject-begin
@@ -38,6 +39,9 @@ const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 const postcssNormalize = require('postcss-normalize');
 
 const appPackageJson = require(paths.appPackageJson);
+
+// Simplr custom configs
+const appSimplrCustomConfig = require(paths.appSimplrCustomConfig);
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
 const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
@@ -137,6 +141,10 @@ module.exports = function(webpackEnv) {
     }
     return loaders;
   };
+
+  const useHtmlWebpackPlugin = appSimplrCustomConfig.useHtmlWebpackPlugin;
+  const useModuleFederationPlugin = appSimplrCustomConfig.useModuleFederationPlugin;
+  const moduleFederationPluginConfig = appSimplrCustomConfig.moduleFederationPluginConfig;
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -559,7 +567,8 @@ module.exports = function(webpackEnv) {
     },
     plugins: [
       // Generates an `index.html` file with the <script> injected.
-      new HtmlWebpackPlugin(
+      // if ModuleFederationPlugin, index.html is may not be needed in prod build
+      useHtmlWebpackPlugin && new HtmlWebpackPlugin(
         Object.assign(
           {},
           {
@@ -584,6 +593,9 @@ module.exports = function(webpackEnv) {
             : undefined
         )
       ),
+      useModuleFederationPlugin && new ModuleFederationPlugin({
+        ...moduleFederationPluginConfig,
+      }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
