@@ -73,6 +73,7 @@ module.exports = {
   proxySetup: resolveApp('src/setupProxy.js'),
   appNodeModules: resolveApp('node_modules'),
   publicUrlOrPath,
+  appWebpackOverrideConfig: resolveApp('webpack.config.js'),
 };
 
 // @remove-on-eject-begin
@@ -100,6 +101,7 @@ module.exports = {
   ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
   appTypeDeclarations: resolveApp('src/react-app-env.d.ts'),
   ownTypeDeclarations: resolveOwn('lib/react-app.d.ts'),
+  appWebpackOverrideConfig: resolveApp('webpack.config.js'),
 };
 
 const ownPackageJson = require('../package.json');
@@ -130,6 +132,7 @@ if (
     proxySetup: resolveOwn(`${templatePath}/src/setupProxy.js`),
     appNodeModules: resolveOwn('node_modules'),
     publicUrlOrPath,
+    appWebpackOverrideConfig: resolveApp('webpack.config.js'),
     // These properties only exist before ejecting:
     ownPath: resolveOwn('.'),
     ownNodeModules: resolveOwn('node_modules'),

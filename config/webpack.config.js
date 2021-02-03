@@ -36,6 +36,7 @@ const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const getCacheIdentifier = require('react-dev-utils/getCacheIdentifier');
 // @remove-on-eject-end
 const postcssNormalize = require('postcss-normalize');
+const { merge } = require('webpack-merge');
 
 const appPackageJson = require(paths.appPackageJson);
 
@@ -62,7 +63,7 @@ const sassModuleRegex = /\.module\.(scss|sass)$/;
 
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
-module.exports = function(webpackEnv) {
+function getBaseConfig (webpackEnv) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -722,3 +723,10 @@ module.exports = function(webpackEnv) {
     performance: false,
   };
 };
+
+module.exports = function(mode) {
+  const baseConfig = getBaseConfig(mode);
+  const appWebpackOverrideConfig = require(paths.appWebpackOverrideConfig) || {};
+
+  return merge(baseConfig, appWebpackOverrideConfig);
+}
