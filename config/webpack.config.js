@@ -169,21 +169,19 @@ module.exports = function(webpackEnv) {
       // changing JS code would still trigger a refresh.
     ].filter(Boolean),
     output: {
-      // The build folder.
-      path: isEnvProduction ? paths.appBuild : undefined,
+      // // The build folder.
+      // path: isEnvProduction ? paths.appBuild : undefined,
       // Add /* filename */ comments to generated require()s in the output.
-      pathinfo: isEnvDevelopment,
-      // There will be one main bundle, and one file per asynchronous chunk.
-      // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
-      // TODO: remove this when upgrading to webpack 5
-      futureEmitAssets: true,
-      // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
-        : isEnvDevelopment && 'static/js/[name].chunk.js',
+      // pathinfo: isEnvDevelopment,
+      // // There will be one main bundle, and one file per asynchronous chunk.
+      // // In development, it does not produce real files.
+      // filename: isEnvProduction
+      //   ? 'static/js/[name].[contenthash:8].js'
+      //   : isEnvDevelopment && 'static/js/bundle.js',
+      // // There are also additional JS chunk files if you use code splitting.
+      // chunkFilename: isEnvProduction
+      //   ? 'static/js/[name].[contenthash:8].chunk.js'
+      //   : isEnvDevelopment && 'static/js/[name].chunk.js',
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
       // We inferred the "public path" (such as / or /my-project) from homepage.
@@ -198,7 +196,8 @@ module.exports = function(webpackEnv) {
           (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
       // Prevents conflicts when multiple webpack runtimes (from different apps)
       // are used on the same page.
-      jsonpFunction: `webpackJsonp${appPackageJson.name}`,
+      // ALEC: disabled, not supported in wp5
+      // jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       // this defaults to 'window', but by setting it to 'this' then
       // module chunks which are built will work in web workers as well.
       globalObject: 'this',
@@ -630,24 +629,25 @@ module.exports = function(webpackEnv) {
       //   `index.html`
       // - "entrypoints" key: Array of files which are included in `index.html`,
       //   can be used to reconstruct the HTML if necessary
-      new ManifestPlugin({
-        fileName: 'asset-manifest.json',
-        publicPath: paths.publicUrlOrPath,
-        generate: (seed, files, entrypoints) => {
-          const manifestFiles = files.reduce((manifest, file) => {
-            manifest[file.name] = file.path;
-            return manifest;
-          }, seed);
-          const entrypointFiles = entrypoints.main.filter(
-            fileName => !fileName.endsWith('.map')
-          );
+      // ALEC: temp disabled
+      // new ManifestPlugin({
+      //   fileName: 'asset-manifest.json',
+      //   publicPath: paths.publicUrlOrPath,
+      //   generate: (seed, files, entrypoints) => {
+      //     const manifestFiles = files.reduce((manifest, file) => {
+      //       manifest[file.name] = file.path;
+      //       return manifest;
+      //     }, seed);
+      //     const entrypointFiles = entrypoints.main.filter(
+      //       fileName => !fileName.endsWith('.map')
+      //     );
 
-          return {
-            files: manifestFiles,
-            entrypoints: entrypointFiles,
-          };
-        },
-      }),
+      //     return {
+      //       files: manifestFiles,
+      //       entrypoints: entrypointFiles,
+      //     };
+      //   },
+      // }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
@@ -699,18 +699,23 @@ module.exports = function(webpackEnv) {
           // The formatter is invoked directly in WebpackDevServerUtils during development
           formatter: isEnvProduction ? typescriptFormatter : undefined,
         }),
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+        })
     ].filter(Boolean),
     // Some libraries import Node modules but don't use them in the browser.
     // Tell webpack to provide empty mocks for them so importing them works.
-    node: {
-      module: 'empty',
-      dgram: 'empty',
-      dns: 'mock',
-      fs: 'empty',
-      http2: 'empty',
-      net: 'empty',
-      tls: 'empty',
-      child_process: 'empty',
+    resolve: {
+      fallback: {
+        module: false,
+        dgram: false,
+        dns: false,
+        fs: false,
+        http2: false,
+        net: false,
+        tls: false,
+        child_process: false,  
+      }
     },
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter
