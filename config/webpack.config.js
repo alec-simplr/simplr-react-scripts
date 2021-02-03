@@ -171,7 +171,7 @@ function getBaseConfig (webpackEnv) {
     ].filter(Boolean),
     output: {
       // // The build folder.
-      // path: isEnvProduction ? paths.appBuild : undefined,
+      // path: isEnvProduction ? paths.appDist : undefined,
       // Add /* filename */ comments to generated require()s in the output.
       // pathinfo: isEnvDevelopment,
       // // There will be one main bundle, and one file per asynchronous chunk.
@@ -274,12 +274,13 @@ function getBaseConfig (webpackEnv) {
         chunks: 'all',
         name: false,
       },
+      // ALEC: throws fn is not a function error
       // Keep the runtime chunk separated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
       // https://github.com/facebook/create-react-app/issues/5358
-      runtimeChunk: {
-        name: entrypoint => `runtime-${entrypoint.name}`,
-      },
+      // runtimeChunk: {
+      //   name: entrypoint => `runtime-${entrypoint.name}`,
+      // },
     },
     resolve: {
       // This allows you to set a fallback for where webpack should look for modules.
